@@ -41,7 +41,7 @@ impl<T: Module> Data<T> {
     fn get_format(config: Option<&Value>) -> String {
         match config {
             Some(con) => con.get("format").unwrap().as_str().unwrap().to_string(),
-            _ => T::default_format().to_string(),
+            None => T::default_format().to_string(),
         }
     }
 }

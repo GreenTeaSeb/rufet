@@ -14,3 +14,4 @@ panic = 'abort'     # Abort on panic
 [dependencies]
 #libmacchina = "3"
 toml = "0.5.3"
+sys-info = "0.9"

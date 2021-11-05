@@ -2,7 +2,10 @@ use crate::utils::Module;
 pub struct Kernel {}
 impl Module for Kernel {
     fn get_val() -> String {
-        std::fs::read_to_string("/proc/version").unwrap_or_default()
+        match sys_info::os_release() {
+            Ok(info) => info.to_string(),
+            Err(_) => "".to_string(),
+        }
     }
     fn default_format() -> &'static str {
         "Kernel: $value\n"

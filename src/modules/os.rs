@@ -11,4 +11,7 @@ impl Module for Os {
         .trim_matches('"')
         .to_string()
     }
+    fn default_format() -> &'static str {
+        "Os: $value\n"
+    }
 }

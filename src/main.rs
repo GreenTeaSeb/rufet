@@ -1,11 +1,11 @@
-mod modules;
+mod modules
 use crate::modules::{hostname, kernel, os, utils};
 use std::collections::HashMap;
 use std::env;
 use toml::Value;
 
 fn get_config() -> Result<Value, Box<dyn std::error::Error>> {
-    let config = std::fs::read_to_string(env!("HOME").to_owned() + "/.config/rufet.toml")?;
+    let config = std::fs::read_to_string(env!("HOME").to_owned() + "/.config/ruet.toml")?;
     Ok(toml::from_str(&config)?)
 }
 
@@ -40,8 +40,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .collect::<String>(),
         );
     }
-    for (key, val) in &map {
-        format = format.replace(key, &val);
-    }
+
+    map.iter().for_each(|(k, v)| format = format.replace(k, v));
+
     Ok(println!("{}", format))
 }

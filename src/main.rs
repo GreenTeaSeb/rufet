@@ -35,7 +35,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "$uptime",
             uptime::Uptime::print(
                 config.get("uptime"),
-                "Uptime: $d days, $h hours, $m minutes\n",
+                "\x1b[38;2;23;147;209;1mUptime:\x1b[0m $d days, $h hours, $m minutes\n",
             ),
         ),
     ]);

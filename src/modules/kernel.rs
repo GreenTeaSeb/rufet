@@ -1,10 +1,7 @@
 use crate::utils::Module;
 pub struct Kernel {}
 impl Module for Kernel {
-    fn get_val() -> String {
-        match sys_info::os_release() {
-            Ok(info) => info.to_string(),
-            Err(_) => "".to_string(),
-        }
+    fn get_val() -> Option<String> {
+        sys_info::os_release().ok()
     }
 }

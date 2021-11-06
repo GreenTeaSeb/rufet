@@ -12,12 +12,13 @@ impl Module for Uptime {
                 let hours = (time / 3600).to_string();
                 time %= 3600;
                 let minutes = (time / 60).to_string();
-
+                let seconds = (time % 60).to_string();
                 form.replace("$d", &days)
                     .replace("$h", &hours)
                     .replace("$m", &minutes)
+                    .replace("$s", &seconds)
             }
-            Err(_) => String::from("unknown boot"),
+            Err(_) => String::from("UNKOWN UPTIME"),
         }
     }
 }

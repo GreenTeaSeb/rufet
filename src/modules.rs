@@ -1,4 +1,4 @@
-pub mod color;
+// pub mod color;
 pub mod hostname;
 pub mod kernel;
 pub mod os;

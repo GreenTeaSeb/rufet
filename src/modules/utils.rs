@@ -1,4 +1,4 @@
-use toml::Value;
+use crate::Value;
 pub fn parse(key: &str, delim: &str, string: &str) -> std::io::Result<String> {
     let mut line = string.lines().find(|n| n.contains(key));
     if line.is_some() {
@@ -20,33 +20,31 @@ pub fn parse(key: &str, delim: &str, string: &str) -> std::io::Result<String> {
 pub fn remove_trailing<'a>(string: &'a str, suffix: &str) -> &'a str {
     string.strip_suffix(suffix).unwrap_or(string)
 }
-
-pub struct Data<T: Module> {
+//
+pub struct Data {
     pub value: String,
-    pub format: String,
-    pub module: T,
 }
 
-impl<T: Module> Data<T> {
-    pub fn new(t: T, config: Option<&Value>) -> Self {
-        Data {
-            format: Data::<T>::get_format(config),
-            value: T::get_val().replace("\n", ""),
-            module: t,
-        }
-    }
-    pub fn print(&self) -> String {
-        self.format.replace("$value", &self.value)
-    }
-    fn get_format(config: Option<&Value>) -> String {
-        match config {
-            Some(con) => con.get("format").unwrap().as_str().unwrap().to_string(),
-            None => T::default_format().to_string(),
-        }
+impl std::fmt::Display for Data {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "({})", self.value)
     }
 }
 
 pub trait Module {
-    fn get_val() -> String;
-    fn default_format() -> &'static str;
+    fn print(config: Option<&Value>, default: &'static str) -> String {
+        Self::get_format(config, default).replace("$value", &Self::get_val())
+    }
+    fn get_format(config: Option<&Value>, default: &'static str) -> String {
+        match config {
+            Some(con) => match con.get("format") {
+                Some(con) => con.as_str().get_or_insert(default).to_string(),
+                None => String::from(default),
+            },
+            None => default.to_string(),
+        }
+    }
+    fn get_val() -> String {
+        String::from("aa")
+    }
 }

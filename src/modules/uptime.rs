@@ -1,21 +1,23 @@
-use crate::utils::Module;
+use crate::utils::*;
+use crate::Value;
 pub struct Uptime {}
 impl Module for Uptime {
-    fn get_val() -> String {
+    fn print(config: Option<&Value>, default: &'static str) -> String {
+        let form = Self::get_format(config, default);
         match sys_info::boottime() {
             Ok(info) => {
                 let mut time = info.tv_sec;
-                let days = time / (24 * 3600);
+                let days = (time / (24 * 3600)).to_string();
                 time %= 24 * 3600;
-                let hours = time / 3600;
+                let hours = (time / 3600).to_string();
                 time %= 3600;
-                let minutes = time / 60;
-                format!("{} days, {:02}:{:02}", days, hours, minutes)
+                let minutes = (time / 60).to_string();
+
+                form.replace("$d", &days)
+                    .replace("$h", &hours)
+                    .replace("$m", &minutes)
             }
-            Err(_) => "".to_string(),
+            Err(_) => String::from("unknown boot"),
         }
-    }
-    fn default_format() -> &'static str {
-        "Uptime: $value\n"
     }
 }

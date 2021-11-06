@@ -7,7 +7,4 @@ impl Module for Kernel {
             Err(_) => "".to_string(),
         }
     }
-    fn default_format() -> &'static str {
-        "Kernel: $value\n"
-    }
 }

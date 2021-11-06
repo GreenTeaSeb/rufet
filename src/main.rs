@@ -1,6 +1,7 @@
 mod modules;
+use crate::modules::utils::Module;
 use crate::modules::*;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::env;
 use toml::Value;
 
@@ -20,19 +21,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         None => String::from("$all"),
     };
 
-    let map = HashMap::from([
-        ("$os", utils::Data::new(os::Os {}, config.get("os")).print()),
+    let map = BTreeMap::from([
+        ("$os", os::Os::print(config.get("os"), "OS: $value\n")),
         (
             "$hostname",
-            utils::Data::new(hostname::Hostname {}, config.get("hostname")).print(),
+            hostname::Hostname::print(config.get("hostname"), "Hostname: $value\n"),
         ),
         (
             "$kernel",
-            utils::Data::new(kernel::Kernel {}, config.get("kernel")).print(),
+            kernel::Kernel::print(config.get("get"), "Kernel: $value\n"),
         ),
         (
             "$uptime",
-            utils::Data::new(uptime::Uptime {}, config.get("uptime")).print(),
+            uptime::Uptime::print(
+                config.get("uptime"),
+                "Uptime: $d days, $h hours, $m minutes\n",
+            ),
         ),
     ]);
 

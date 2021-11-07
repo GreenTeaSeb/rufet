@@ -16,11 +16,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Err(_) => toml::from_str("[default]")?,
     };
 
-    let mut format = match config.get("format") {
-        Some(con) => con.as_str().get_or_insert("$all").to_string(),
-        None => String::from("$all"),
-    };
-
+    let mut data = config
+        .get("format")
+        .unwrap_or(&Value::String(String::default()))
+        .as_str()
+        .get_or_insert("$all")
+        .to_string();
+    let logo = config
+        .get("logo")
+        .unwrap_or(&Value::String(String::default()))
+        .as_str()
+        .get_or_insert("no logo")
+        .to_string();
     let map = BTreeMap::from([
         ("$os", os::Os::print(config.get("os"), "OS: $value\n")),
         (
@@ -35,21 +42,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "$uptime",
             uptime::Uptime::print(
                 config.get("uptime"),
-                "\x1b[38;2;23;147;209;1mUptime:\x1b[0m $d days, $h hours, $m minutes\n",
+                "Uptime: $d days, $h hours, $m minutes\n",
             ),
         ),
     ]);
 
-    if format.contains("$all") {
-        format = format.replace(
+    if data.contains("$all") {
+        data = data.replace(
             "$all",
             &map.keys()
-                .filter(|key| !format.contains(&key.to_string()))
+                .filter(|key| !data.contains(&key.to_string()))
                 .cloned()
                 .collect::<String>(),
         );
     }
-    map.iter().for_each(|(k, v)| format = format.replace(k, v));
+    map.iter().for_each(|(k, v)| data = data.replace(k, v));
 
-    Ok(println!("{}", format))
+    let out = output::Output::new(data, logo);
+    println!("{}", out);
+
+    Ok(())
 }

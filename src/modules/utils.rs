@@ -3,11 +3,7 @@ use crate::Value;
 //     let mut line = string.lines().find(|n| n.contains(key));
 //     if line.is_some() {
 //         Ok(line
-//             .take()
-//             .unwrap_or_default()
-//             .split(delim)
-//             .nth(1)
-//             .unwrap_or_default()
+//             .take(
 //             .to_string())
 //     } else {
 //         Err(std::io::Error::new(
@@ -24,11 +20,11 @@ use crate::Value;
 
 pub trait Module {
     fn print(config: Option<&Value>, default: &'static str) -> String {
-        let default = format!("\x1b[38;2;23;147;209;1m{def}", def = default);
         match &Self::get_val() {
-            Some(value) => Self::get_format(config, &default)
-                .replace("$value", format!("\x1b[0m{}", value).as_str()),
-            None => String::from(""),
+            Some(value) => {
+                Self::get_format(config, default).replace("$value", format!("{}", value).as_str())
+            }
+            None => String::default(),
         }
     }
     fn get_format(config: Option<&Value>, default: &str) -> String {

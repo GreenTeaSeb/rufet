@@ -9,7 +9,7 @@ impl Output {
     pub fn new(data_in: String, logo_in: String) -> Self {
         Self {
             data: Self::add_border(data_in, 5, 15),
-            logo: Self::add_border(logo_in, 1, 0),
+            logo: Self::add_border(logo_in, 10, 0),
         }
     }
 
@@ -21,7 +21,11 @@ impl Output {
         let data_formated = format!(
             "{:\n^h$}",
             data,
-            h = if height == 0 { 0 } else { data.len() + height }
+            h = if height == 0 {
+                0
+            } else {
+                data.chars().count() + height
+            }
         )
         .lines()
         .map(|x| {

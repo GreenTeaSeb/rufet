@@ -8,31 +8,32 @@ pub struct Output {
 impl Output {
     pub fn new(data_in: String, logo_in: String) -> Self {
         Self {
-            data: Self::add_border(data_in, 5),
-            logo: Self::add_border(logo_in, 1),
+            data: Self::add_border(data_in, 5, 15),
+            logo: Self::add_border(logo_in, 1, 0),
         }
     }
 
-    fn add_border(data: String, padding: usize) -> String {
+    fn add_border(data: String, padding: usize, height: usize) -> String {
         if data.is_empty() {
             return data;
         }
-        let longest_string = match data.lines().max() {
-            Some(a) => a.len() + padding,
-            None => 0,
-        };
-        let data_formated = data
-            .lines()
-            .map(|x| {
-                format!(
-                    "{left}{:^width$}{right}\n",
-                    x,
-                    width = longest_string,
-                    left = Border::get(&Border::Left),
-                    right = Border::get(&Border::Right),
-                )
-            })
-            .collect::<String>();
+        let longest_string = data.lines().map(|x| x.chars().count()).max().unwrap_or(0) + padding;
+        let data_formated = format!(
+            "{:\n^h$}",
+            data,
+            h = if height == 0 { 0 } else { data.len() + height }
+        )
+        .lines()
+        .map(|x| {
+            format!(
+                "{left}{:^width$}{right}\n",
+                x,
+                width = longest_string,
+                left = Border::get(&Border::Left),
+                right = Border::get(&Border::Right),
+            )
+        })
+        .collect::<String>();
         format!(
             "{cor0}{top}{cor1}\n{data}{cor2}{bot}{cor3}",
             top = Border::get(&Border::Top).repeat(longest_string),

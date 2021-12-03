@@ -1,53 +1,17 @@
-use crate::borders::Border;
-
+use crate::utils::Module;
+use toml::Value;
 pub struct Output {
     data: String,
     logo: String,
 }
 
+impl Module for Output {}
 impl Output {
-    pub fn new(data_in: String, logo_in: String) -> Self {
+    pub fn new(data_in: String, logo_in: String, config_data: &Value, config_logo: &Value) -> Self {
         Self {
-            data: Self::add_border(data_in, 5, 15),
-            logo: Self::add_border(logo_in, 10, 0),
+            data: Self::with_border(Some(config_data), data_in, true),
+            logo: Self::with_border(Some(config_logo), logo_in, true),
         }
-    }
-
-    fn add_border(data: String, padding: usize, height: usize) -> String {
-        if data.is_empty() {
-            return data;
-        }
-        let longest_string = data.lines().map(|x| x.chars().count()).max().unwrap_or(0) + padding;
-        let data_formated = format!(
-            "{:\n^h$}",
-            data,
-            h = if height == 0 {
-                0
-            } else {
-                data.chars().count() + height
-            }
-        )
-        .lines()
-        .map(|x| {
-            format!(
-                "{left}{:^width$}{right}\n",
-                x,
-                width = longest_string,
-                left = Border::get(&Border::Left),
-                right = Border::get(&Border::Right),
-            )
-        })
-        .collect::<String>();
-        format!(
-            "{cor0}{top}{cor1}\n{data}{cor2}{bot}{cor3}",
-            top = Border::get(&Border::Top).repeat(longest_string),
-            data = data_formated,
-            bot = Border::get(&Border::Bottom).repeat(longest_string),
-            cor0 = Border::get(&Border::TopCornerLeft),
-            cor1 = Border::get(&Border::TopCornerRight),
-            cor2 = Border::get(&Border::BotCornerLeft),
-            cor3 = Border::get(&Border::BotCornerRight)
-        )
     }
 }
 impl std::fmt::Display for Output {
@@ -56,10 +20,23 @@ impl std::fmt::Display for Output {
         let mut data_lines = self.data.lines();
         let mut logo_lines = self.logo.lines();
         let mut output = String::default();
+        let longest_string = self
+            .logo
+            .lines()
+            .map(|x| x.chars().count())
+            .max()
+            .unwrap_or(1)
+            .max(1);
         (0..l).for_each(|_| {
-            let data_line = data_lines.nth(0).unwrap_or("");
-            let logo_line = logo_lines.nth(0).unwrap_or("");
-            output = format!("{}{}{}\n", output, logo_line, data_line);
+            let data_line = data_lines.nth(0).unwrap_or(" ");
+            let logo_line = logo_lines.nth(0).unwrap_or(" ");
+            output = format!(
+                "{}{:0widthL$}{}\n",
+                output,
+                logo_line,
+                data_line,
+                widthL = longest_string
+            );
         });
         write!(f, "{}", output)
     }

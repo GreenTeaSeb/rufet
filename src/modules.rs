@@ -3,6 +3,7 @@
 pub mod borders;
 pub mod hostname;
 pub mod kernel;
+pub mod memory;
 pub mod os;
 pub mod output;
 pub mod uptime;

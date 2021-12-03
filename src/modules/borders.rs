@@ -10,8 +10,8 @@ pub enum Border {
 }
 
 impl Border {
-    pub fn get(&self) -> &str {
-        match *self {
+    pub fn get(&self) -> String {
+        let border = match *self {
             Border::Top => "─",
             Border::Bottom => "─",
             Border::Left => "│",
@@ -20,6 +20,7 @@ impl Border {
             Border::TopCornerRight => "╮",
             Border::BotCornerRight => "╯",
             Border::BotCornerLeft => "╰",
-        }
+        };
+        format!("{}", border)
     }
 }

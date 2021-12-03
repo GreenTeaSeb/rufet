@@ -15,3 +15,5 @@ panic = 'abort'     # Abort on panic
 #libmacchina = "3"
 toml = "0.5.3"
 sys-info = "0.9"
+# regex = "1.5.4"
+# colored = "2.0.0"

@@ -1,9 +1,9 @@
-use crate::utils::*;
+use crate::utils::Module;
 use crate::Value;
 pub struct Uptime {}
 impl Module for Uptime {
     fn print(config: Option<&Value>, default: &'static str) -> String {
-        let form = Self::get_format(config, default);
+        let form = Self::get_from(config, "format", default);
         match sys_info::boottime() {
             Ok(info) => {
                 let mut time = info.tv_sec;
@@ -13,10 +13,12 @@ impl Module for Uptime {
                 time %= 3600;
                 let minutes = (time / 60).to_string();
                 let seconds = (time % 60).to_string();
-                form.replace("$d", &days)
+                let output = form
+                    .replace("$d", &days)
                     .replace("$h", &hours)
                     .replace("$m", &minutes)
-                    .replace("$s", &seconds)
+                    .replace("$s", &seconds);
+                Self::with_border(config, output, false)
             }
             Err(_) => String::from("UNKOWN UPTIME"),
         }

@@ -15,7 +15,7 @@ impl Module for Kernel {
         if self.border == false {
             return output;
         }
-        add_border(output, self.padding, self.height, "center")
+        add_border(output, self.height, "center")
     }
     fn get_val(&self) -> String {
         sys_info::os_release().unwrap_or_default()
@@ -25,7 +25,7 @@ impl Module for Kernel {
 impl Default for Kernel {
     fn default() -> Self {
         Self {
-            format: String::from("{Kernel}(224, 16, 71): $value\n"),
+            format: String::from("{Kernel}(bold): $value\n"),
             border: false,
             padding: 0,
             height: 0,

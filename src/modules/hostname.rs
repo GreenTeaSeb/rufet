@@ -15,7 +15,7 @@ impl Module for Hostname {
         if self.border == false {
             return output;
         }
-        add_border(output, self.padding, self.height, "center")
+        add_border(output, self.height, "center")
     }
     fn get_val(&self) -> String {
         sys_info::hostname().unwrap_or_default()
@@ -25,7 +25,7 @@ impl Module for Hostname {
 impl Default for Hostname {
     fn default() -> Self {
         Self {
-            format: String::from("{Hostname}(224, 16, 71): $value\n"),
+            format: String::from("{Hostname}(bold): $value\n"),
             border: false,
             padding: 0,
             height: 0,

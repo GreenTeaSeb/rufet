@@ -15,7 +15,7 @@ impl Module for Memory {
         if self.border == false {
             return output;
         }
-        add_border(output, self.padding, self.height, "center")
+        add_border(output, self.height, "center")
     }
     fn get_val(&self) -> String {
         match sys_info::mem_info() {
@@ -31,7 +31,7 @@ impl Module for Memory {
 impl Default for Memory {
     fn default() -> Self {
         Self {
-            format: String::from("{Memory}(224, 16, 71): $value\n"),
+            format: String::from("{Memory}(bold): $value\n"),
             border: false,
             padding: 0,
             height: 0,

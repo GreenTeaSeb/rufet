@@ -1,5 +1,5 @@
-// pub mod color;
 pub mod borders;
+pub mod color;
 pub mod data;
 pub mod hostname;
 pub mod kernel;

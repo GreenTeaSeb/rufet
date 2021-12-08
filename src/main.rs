@@ -16,9 +16,16 @@ impl Rufet {
         let mut data_lines = second.lines();
         let mut logo_lines = first.lines();
         let mut output = String::default();
+        let text_reg = regex::Regex::new(r"\u001b[^m]*?m").unwrap();
         let longest_string = first
             .lines()
-            .map(|x| x.chars().count())
+            .map(|x| {
+                if text_reg.is_match(x) == true {
+                    text_reg.replace_all(x, "").chars().count()
+                } else {
+                    x.chars().count()
+                }
+            })
             .max()
             .unwrap_or(1)
             .max(1);
@@ -48,6 +55,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Err(_) => Rufet::default(),
     };
     let output = rufet.format(&rufet.logo.format(), &rufet.data.format());
-    println!("{}", output);
+    println!("{}", &output);
     Ok(())
 }

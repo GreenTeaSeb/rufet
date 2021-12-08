@@ -1,5 +1,5 @@
 use crate::borders::Border;
-use qute::*;
+use crate::color::to_colored;
 
 pub trait Module {
     fn get_val(&self) -> String {
@@ -12,7 +12,38 @@ pub fn default_format(input: &String, value: &String) -> String {
     to_colored(&input.replace("$value", &format!("{}", value).to_string()))
 }
 
-pub fn add_border(data: String, padding: usize, height: usize, alignment: &str) -> String {
+pub fn add_padding(input: &String, padding: usize) -> String {
+    let text_reg = regex::Regex::new(r"\u001b[^m]*?m").unwrap();
+    let longest_string = input
+        .lines()
+        .map(|x| {
+            if text_reg.is_match(x) == true {
+                text_reg.replace_all(x, "").chars().count()
+            } else {
+                x.chars().count()
+            }
+        })
+        .max()
+        .unwrap_or(0);
+    input
+        .lines()
+        .map(|x| {
+            format!(
+                "{padl}{data}{padr}\n",
+                data = x,
+                padl = " ".repeat(padding),
+                padr = if text_reg.is_match(x) == true {
+                    " ".repeat(
+                        longest_string + padding - text_reg.replace_all(x, "").chars().count(),
+                    )
+                } else {
+                    " ".repeat((longest_string + padding) - x.len())
+                },
+            )
+        })
+        .collect::<String>()
+}
+pub fn add_border(data: String, height: usize, alignment: &str) -> String {
     if data.is_empty() {
         return data;
     }
@@ -27,8 +58,7 @@ pub fn add_border(data: String, padding: usize, height: usize, alignment: &str) 
             }
         })
         .max()
-        .unwrap_or(0)
-        + padding;
+        .unwrap_or(0);
     let data_formated = format!(
         "{:\n^h$}",
         data,
@@ -85,22 +115,4 @@ pub fn add_border(data: String, padding: usize, height: usize, alignment: &str) 
         cor2 = Border::get(&Border::BotCornerLeft),
         cor3 = Border::get(&Border::BotCornerRight)
     )
-}
-pub fn to_colored(input: &String) -> String {
-    let text_reg = regex::Regex::new(r"\{(.*?)\}\((.*?)\)").unwrap();
-    let mut output = input.clone();
-    for cap in text_reg.captures_iter(input) {
-        let line = &cap[0];
-        let text = &cap[1];
-        let color = &cap[2]
-            .split(',')
-            .map(|p| p.trim().parse::<u8>().unwrap_or_default())
-            .collect::<Vec<u8>>();
-        let colored_text = qute!(text)
-            .set_rgb_color(color[0], color[1], color[2])
-            .to_string();
-
-        output = output.replace(line, &colored_text);
-    }
-    output
 }

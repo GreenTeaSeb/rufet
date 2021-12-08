@@ -1,3 +1,4 @@
+use crate::color::to_colored;
 use crate::utils::*;
 use serde::Deserialize;
 
@@ -29,7 +30,7 @@ impl Module for Uptime {
                 if self.border == false {
                     return to_colored(&output);
                 }
-                add_border(to_colored(&output), self.padding, self.height, "center")
+                add_border(to_colored(&output), self.height, "center")
             }
             Err(_) => String::from("UNKOWN UPTIME"),
         }
@@ -42,7 +43,7 @@ impl Module for Uptime {
 impl Default for Uptime {
     fn default() -> Self {
         Self {
-            format: String::from("{Uptime}(224, 16, 71): $d days, $h hours, $m minutes\n"),
+            format: String::from("{Uptime}(bold): $d days, $h hours, $m minutes\n"),
             border: false,
             padding: 0,
             height: 0,

@@ -1,3 +1,4 @@
+use crate::color::to_colored;
 use crate::modules::*;
 use crate::utils::*;
 use serde::Deserialize;
@@ -38,10 +39,12 @@ impl Module for Data {
         }
         map.iter()
             .for_each(|(k, v)| formatted = formatted.replace(k, v));
+        formatted = add_padding(&formatted, self.padding);
+
         if self.border == false {
             return formatted;
         }
-        add_border(formatted, self.padding, self.height, &self.alignment)
+        add_border(formatted, self.height, &self.alignment)
     }
 }
 
@@ -49,10 +52,10 @@ impl Default for Data {
     fn default() -> Self {
         Self {
             format: String::from("$all"),
-            padding: 0,
-            height: 0,
+            padding: 5,
+            height: 25,
             border: true,
-            alignment: "center".to_string(),
+            alignment: "left".to_string(),
             hostname: hostname::Hostname::default(),
             memory: memory::Memory::default(),
             kernel: kernel::Kernel::default(),

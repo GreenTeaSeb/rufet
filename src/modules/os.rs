@@ -1,21 +1,30 @@
+use crate::color::Rule;
 use crate::utils::*;
 use serde::Deserialize;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(default)]
 pub struct Os {
     format: String,
     border: bool,
     height: usize,
     padding: usize,
+    alignment: String,
+    rule: Vec<Rule>,
 }
 impl Module for Os {
     fn format(&self) -> String {
-        let output = default_format(&self.format, &self.get_val());
-        if self.border == false {
-            return output;
+        if !self.rule.is_empty() {
+            self.rule
+                .iter()
+                .map(|rule| self.format.replace(&rule.id, &rule.get_colored()))
+                .collect::<String>()
+        } else {
+            self.format.clone()
         }
-        add_border(output, self.height, "center")
+        .replace("$value", &self.get_val())
+        .add_padding(&self.padding)
+        .add_border(&self.height, &self.alignment, self.border)
     }
     fn get_val(&self) -> String {
         match sys_info::linux_os_release() {
@@ -28,10 +37,12 @@ impl Module for Os {
 impl Default for Os {
     fn default() -> Self {
         Self {
-            format: String::from("{Os}(bold): $value\n"),
+            format: String::from("\u{1b}[38;2;255;255;255;49;1mOs:\u{1b}[0m $value"),
             border: false,
             padding: 0,
             height: 0,
+            alignment: String::from("left"),
+            rule: vec![],
         }
     }
 }

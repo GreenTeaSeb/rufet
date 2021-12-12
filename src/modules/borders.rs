@@ -21,6 +21,6 @@ impl Border {
             Border::BotCornerRight => "╯",
             Border::BotCornerLeft => "╰",
         };
-        format!("{}", border)
+        border.to_string()
     }
 }

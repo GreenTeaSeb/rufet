@@ -16,5 +16,3 @@ panic = 'abort'     # Abort on panic
 toml = "0.5.3"
 serde = {version="1.0.130", features = ["derive"]}
 sys-info = "0.9"
-regex = "1.5.4"
-qute = "0.0.13"

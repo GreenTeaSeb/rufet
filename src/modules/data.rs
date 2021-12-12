@@ -1,10 +1,10 @@
-use crate::color::to_colored;
+use crate::color::Rule;
 use crate::modules::*;
 use crate::utils::*;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(default)]
 pub struct Data {
     format: String,
@@ -17,6 +17,7 @@ pub struct Data {
     kernel: kernel::Kernel,
     os: os::Os,
     uptime: uptime::Uptime,
+    rule: Vec<Rule>,
 }
 impl Module for Data {
     fn format(&self) -> String {
@@ -27,24 +28,20 @@ impl Module for Data {
             ("$os", self.os.format()),
             ("$uptime", self.uptime.format()),
         ]);
-        let mut formatted = self.format.clone();
-        if formatted.contains("$all") {
-            formatted = formatted.replace(
+        let mut output = self.format.clone();
+        if output.contains("$all") {
+            output = output.replace(
                 "$all",
                 &map.keys()
-                    .filter(|key| !formatted.contains(&key.to_string()))
+                    .filter(|key| !output.contains(&key.to_string()))
                     .cloned()
                     .collect::<String>(),
             );
         }
-        map.iter()
-            .for_each(|(k, v)| formatted = formatted.replace(k, v));
-        formatted = add_padding(&formatted, self.padding);
-
-        if self.border == false {
-            return formatted;
-        }
-        add_border(formatted, self.height, &self.alignment)
+        map.iter().for_each(|(k, v)| output = output.replace(k, v));
+        output
+            .add_padding(&self.padding)
+            .add_border(&self.height, &self.alignment, self.border)
     }
 }
 
@@ -61,6 +58,7 @@ impl Default for Data {
             kernel: kernel::Kernel::default(),
             os: os::Os::default(),
             uptime: uptime::Uptime::default(),
+            rule: vec![Rule::default()],
         }
     }
 }

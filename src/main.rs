@@ -1,9 +1,10 @@
 mod modules;
 use crate::modules::*;
+use color::AnsiExt;
 use serde::Deserialize;
 use utils::Module;
 
-#[derive(Deserialize, Default)]
+#[derive(Deserialize, Debug, Default)]
 #[serde(default)]
 struct Rufet {
     data: data::Data,
@@ -11,27 +12,20 @@ struct Rufet {
 }
 
 impl Rufet {
-    fn format(&self, first: &String, second: &String) -> String {
+    fn format(&self, first: &str, second: &str) -> String {
         let l = std::cmp::max(first.lines().count(), second.lines().count());
         let mut data_lines = second.lines();
         let mut logo_lines = first.lines();
         let mut output = String::default();
-        let text_reg = regex::Regex::new(r"\u001b[^m]*?m").unwrap();
         let longest_string = first
             .lines()
-            .map(|x| {
-                if text_reg.is_match(x) == true {
-                    text_reg.replace_all(x, "").chars().count()
-                } else {
-                    x.chars().count()
-                }
-            })
+            .map(|x| x.to_string().remove_ansi().chars().count())
             .max()
             .unwrap_or(1)
             .max(1);
         (0..l).for_each(|_| {
-            let data_line = data_lines.nth(0).unwrap_or(" ");
-            let logo_line = logo_lines.nth(0).unwrap_or(" ");
+            let data_line = data_lines.next().unwrap_or(" ");
+            let logo_line = logo_lines.next().unwrap_or(" ");
             output = format!(
                 "{}{:0widthL$}{}\n",
                 output,

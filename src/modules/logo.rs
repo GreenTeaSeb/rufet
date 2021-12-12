@@ -8,13 +8,15 @@ pub struct Logo {
     padding: usize,
     height: usize,
     border: bool,
+    alignment: String,
 }
 impl Module for Logo {
     fn format(&self) -> String {
-        if self.border == false {
-            return self.format.clone();
-        }
-        add_border(self.format.clone(), self.height, "center")
+        self.format.clone().add_padding(&self.padding).add_border(
+            &self.height,
+            &self.alignment,
+            self.border,
+        )
     }
 }
 
@@ -25,6 +27,7 @@ impl Default for Logo {
             padding: 2,
             height: 0,
             border: true,
+            alignment: "center".to_string(),
         }
     }
 }

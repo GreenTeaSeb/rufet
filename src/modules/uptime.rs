@@ -1,18 +1,28 @@
-use crate::color::to_colored;
+use crate::color::Rule;
 use crate::utils::*;
 use serde::Deserialize;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(default)]
 pub struct Uptime {
     format: String,
     border: bool,
     height: usize,
     padding: usize,
+    alignment: String,
+    rule: Vec<Rule>,
+}
+
+#[derive(Default)]
+struct Time {
+    days: String,
+    hours: String,
+    minutes: String,
+    seconds: String,
 }
 impl Module for Uptime {
     fn format(&self) -> String {
-        match sys_info::boottime() {
+        let time = match sys_info::boottime() {
             Ok(info) => {
                 let mut time = info.tv_sec;
                 let days = (time / (24 * 3600)).to_string();
@@ -21,32 +31,44 @@ impl Module for Uptime {
                 time %= 3600;
                 let minutes = (time / 60).to_string();
                 let seconds = (time % 60).to_string();
-                let output = self
-                    .format
-                    .replace("$d", &days)
-                    .replace("$h", &hours)
-                    .replace("$m", &minutes)
-                    .replace("$s", &seconds);
-                if self.border == false {
-                    return to_colored(&output);
+                Time {
+                    days,
+                    hours,
+                    minutes,
+                    seconds,
                 }
-                add_border(to_colored(&output), self.height, "center")
+                // self.format
             }
-            Err(_) => String::from("UNKOWN UPTIME"),
+            Err(_) => Time::default(),
+        };
+        if !self.rule.is_empty() {
+            self.rule
+                .iter()
+                .map(|rule| self.format.replace(&rule.id, &rule.get_colored()))
+                .collect::<String>()
+        } else {
+            self.format.clone()
         }
-    }
-    fn get_val(&self) -> String {
-        sys_info::hostname().unwrap_or_default()
+        .replace("$d", &time.days)
+        .replace("$h", &time.hours)
+        .replace("$m", &time.minutes)
+        .replace("$s", &time.seconds)
+        .add_padding(&self.padding)
+        .add_border(&self.height, &self.alignment, self.border)
     }
 }
 
 impl Default for Uptime {
     fn default() -> Self {
         Self {
-            format: String::from("{Uptime}(bold): $d days, $h hours, $m minutes\n"),
+            format: String::from(
+                "\u{1b}[38;2;255;255;255;49;1mUptime:\u{1b}[0m $d days, $h hours, $m minutes",
+            ),
             border: false,
             padding: 0,
             height: 0,
+            alignment: String::from("left"),
+            rule: vec![],
         }
     }
 }

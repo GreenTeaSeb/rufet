@@ -15,10 +15,10 @@ pub struct Hostname {
 impl Module for Hostname {
     fn format(&self) -> String {
         if !self.rule.is_empty() {
-            self.rule
-                .iter()
-                .map(|rule| self.format.replace(&rule.id, &rule.get_colored()))
-                .collect::<String>()
+            let a = self.rule.iter().fold(self.format.clone(), |acc, rule| {
+                acc.replace(&rule.id, &rule.get_colored())
+            });
+            a
         } else {
             self.format.clone()
         }

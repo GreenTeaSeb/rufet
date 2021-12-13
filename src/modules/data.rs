@@ -28,7 +28,14 @@ impl Module for Data {
             ("$os", self.os.format()),
             ("$uptime", self.uptime.format()),
         ]);
-        let mut output = self.format.clone();
+        let mut output = if !self.rule.is_empty() {
+            self.rule
+                .iter()
+                .map(|rule| self.format.replace(&rule.id, &rule.get_colored()))
+                .collect::<String>()
+        } else {
+            self.format.clone()
+        };
         if output.contains("$all") {
             output = output.replace(
                 "$all",
@@ -58,7 +65,7 @@ impl Default for Data {
             kernel: kernel::Kernel::default(),
             os: os::Os::default(),
             uptime: uptime::Uptime::default(),
-            rule: vec![Rule::default()],
+            rule: vec![],
         }
     }
 }

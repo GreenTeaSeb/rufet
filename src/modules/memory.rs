@@ -30,7 +30,8 @@ impl Module for Memory {
         match sys_info::mem_info() {
             Ok(mem) => format!(
                 "{:.4}",
-                (mem.total as f32 / (1024_f32.powf(2.0))).to_string()
+                ((mem.total - mem.free - (mem.buffers + mem.cached)) as f32 / (1024_f32.powf(2.0)))
+                    .to_string()
             ),
             _ => String::default(),
         }
@@ -40,7 +41,7 @@ impl Module for Memory {
 impl Default for Memory {
     fn default() -> Self {
         Self {
-            format: String::from("\u{1b}[38;2;255;255;255;49;1mMemory:\u{1b}[0m $value"),
+            format: String::from("\u{1b}[38;2;255;255;255;49;1mMemory:\u{1b}[0m $value GB"),
             border: false,
             padding: 0,
             height: 0,

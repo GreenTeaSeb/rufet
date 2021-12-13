@@ -25,14 +25,38 @@ impl Rule {
             "\u{1b}[{fg}{bg}{effects}m{data}\u{1b}[0m",
             fg = foreground,
             bg = background,
-            data = self.text,
+            data = if self.text.is_empty() {
+                &self.id
+            } else {
+                &self.text
+            },
             effects = effects
         )
     }
     fn parse(color: &str) -> Option<String> {
-        if color.trim().starts_with('#') || color.is_empty() {
-            // parse hex
+        if color.is_empty() {
             return None;
+        }
+        if color.trim().starts_with('#') {
+            if let Some(hex) = color.get(1..) {
+                let hex = if hex.chars().count() == 3 {
+                    hex.chars()
+                        .map(|x| x.to_string().repeat(2))
+                        .collect::<String>()
+                } else {
+                    hex.to_string()
+                };
+                let hex_b = usize::from_str_radix(&hex, 16).unwrap_or_default();
+
+                let rgb = (hex_b >> 16).to_string()
+                    + ";"
+                    + &((hex_b >> 8) & 0xFF).to_string()
+                    + ";"
+                    + &(hex_b & 0xFF).to_string();
+                return Some(rgb);
+            } else {
+                return None;
+            }
         }; // parse rgb
         Some(color.to_string())
     }

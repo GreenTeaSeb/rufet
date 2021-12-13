@@ -42,10 +42,9 @@ impl Module for Uptime {
             Err(_) => Time::default(),
         };
         if !self.rule.is_empty() {
-            self.rule
-                .iter()
-                .map(|rule| self.format.replace(&rule.id, &rule.get_colored()))
-                .collect::<String>()
+            self.rule.iter().fold(self.format.clone(), |acc, rule| {
+                acc.replace(&rule.id, &rule.get_colored())
+            })
         } else {
             self.format.clone()
         }

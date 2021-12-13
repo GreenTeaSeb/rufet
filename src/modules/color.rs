@@ -6,6 +6,7 @@ use serde::Deserialize;
 pub struct Rule {
     pub id: String,
     pub text: String,
+    pub exec: String,
     pub color: String,
     pub background: String,
     pub effects: Vec<String>,
@@ -25,11 +26,7 @@ impl Rule {
             "\u{1b}[{fg}{bg}{effects}m{data}\u{1b}[0m",
             fg = foreground,
             bg = background,
-            data = if self.text.is_empty() {
-                &self.id
-            } else {
-                &self.text
-            },
+            data = self.get_data(),
             effects = effects
         )
     }
@@ -59,6 +56,24 @@ impl Rule {
             }
         }; // parse rgb
         Some(color.to_string())
+    }
+    fn get_data(&self) -> String {
+        if !self.exec.is_empty() {
+            return String::from_utf8(
+                std::process::Command::new("sh")
+                    .arg("-c")
+                    .arg(&self.exec)
+                    .output()
+                    .expect("failed to execute process")
+                    .stdout,
+            )
+            .unwrap_or_default();
+        }
+        if self.text.is_empty() {
+            self.id.clone()
+        } else {
+            self.text.clone()
+        }
     }
 
     fn get_background(&self) -> String {

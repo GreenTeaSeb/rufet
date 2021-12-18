@@ -1,3 +1,4 @@
+use crate::borders::Border;
 use crate::color::Rule;
 use crate::utils::*;
 use serde::Deserialize;
@@ -6,9 +7,10 @@ use serde::Deserialize;
 #[serde(default)]
 pub struct Uptime {
     format: String,
-    border: bool,
+    border: Border,
     height: usize,
     padding: usize,
+    margin: usize,
     alignment: String,
     rule: Vec<Rule>,
 }
@@ -41,7 +43,7 @@ impl Module for Uptime {
             }
             Err(_) => Time::default(),
         };
-        if !self.rule.is_empty() {
+        let formated = if !self.rule.is_empty() {
             self.rule.iter().fold(self.format.clone(), |acc, rule| {
                 acc.replace(&rule.id, &rule.get_colored())
             })
@@ -52,8 +54,9 @@ impl Module for Uptime {
         .replace("$h", &time.hours)
         .replace("$m", &time.minutes)
         .replace("$s", &time.seconds)
-        .add_padding(&self.padding)
-        .add_border(&self.height, &self.alignment, self.border)
+        .add_margin(&self.padding)
+        .align(&self.alignment);
+        self.border.add_border(&formated).add_margin(&self.margin)
     }
 }
 
@@ -63,7 +66,8 @@ impl Default for Uptime {
             format: String::from(
                 "\u{1b}[38;2;255;255;255;49;1mUptime:\u{1b}[0m $d days, $h hours, $m minutes",
             ),
-            border: false,
+            border: Border::default(),
+            margin: 0,
             padding: 0,
             height: 0,
             alignment: String::from("left"),

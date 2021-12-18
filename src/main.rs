@@ -2,6 +2,7 @@ mod modules;
 use crate::modules::*;
 use color::AnsiExt;
 use serde::Deserialize;
+
 use utils::Module;
 
 #[derive(Deserialize, Debug, Default)]
@@ -50,5 +51,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
     let output = rufet.format(&rufet.logo.format(), &rufet.data.format());
     println!("{}", &output);
+
     Ok(())
 }

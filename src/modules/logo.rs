@@ -1,3 +1,4 @@
+use crate::borders::Border;
 use crate::utils::*;
 use serde::Deserialize;
 
@@ -6,17 +7,19 @@ use serde::Deserialize;
 pub struct Logo {
     format: String,
     padding: usize,
+    margin: usize,
     height: usize,
-    border: bool,
+    border: Border,
     alignment: String,
 }
 impl Module for Logo {
     fn format(&self) -> String {
-        self.format.clone().add_padding(&self.padding).add_border(
-            &self.height,
-            &self.alignment,
-            self.border,
-        )
+        let formatted = self
+            .format
+            .clone()
+            .add_margin(&self.padding)
+            .align(&self.alignment);
+        self.border.add_border(&formatted)
     }
 }
 
@@ -24,9 +27,13 @@ impl Default for Logo {
     fn default() -> Self {
         Self {
             format: tux2().to_string(),
-            padding: 2,
+            margin: 2,
+            padding: 0,
             height: 0,
-            border: true,
+            border: Border {
+                visible: true,
+                ..Border::default()
+            },
             alignment: "center".to_string(),
         }
     }

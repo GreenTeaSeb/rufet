@@ -1,7 +1,9 @@
+use crate::borders::Border;
 use crate::color::Rule;
 use crate::modules::*;
 use crate::utils::*;
 use serde::Deserialize;
+
 use std::collections::BTreeMap;
 
 #[derive(Deserialize, Debug)]
@@ -9,8 +11,9 @@ use std::collections::BTreeMap;
 pub struct Data {
     format: String,
     padding: usize,
+    margin: usize,
     height: usize,
-    border: bool,
+    border: Border,
     alignment: String,
     hostname: hostname::Hostname,
     memory: memory::Memory,
@@ -46,9 +49,11 @@ impl Module for Data {
             );
         }
         map.iter().for_each(|(k, v)| output = output.replace(k, v));
-        output
-            .add_padding(&self.padding)
-            .add_border(&self.height, &self.alignment, self.border)
+        let formated = output
+            .add_margin(&self.padding)
+            .add_height(&self.height)
+            .align(&self.alignment);
+        self.border.add_border(&formated).add_margin(&self.margin)
     }
 }
 
@@ -56,9 +61,13 @@ impl Default for Data {
     fn default() -> Self {
         Self {
             format: String::from("$all"),
-            padding: 5,
+            margin: 0,
+            padding: 9,
             height: 25,
-            border: true,
+            border: Border {
+                visible: true,
+                ..Border::default()
+            },
             alignment: "left".to_string(),
             hostname: hostname::Hostname::default(),
             memory: memory::Memory::default(),

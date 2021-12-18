@@ -1,3 +1,4 @@
+use crate::borders::Border;
 use crate::color::Rule;
 use crate::utils::*;
 use serde::Deserialize;
@@ -6,15 +7,16 @@ use serde::Deserialize;
 #[serde(default)]
 pub struct Hostname {
     format: String,
-    border: bool,
+    border: Border,
     height: usize,
     padding: usize,
+    margin: usize,
     alignment: String,
     rule: Vec<Rule>,
 }
 impl Module for Hostname {
     fn format(&self) -> String {
-        if !self.rule.is_empty() {
+        let formated = if !self.rule.is_empty() {
             self.rule.iter().fold(self.format.clone(), |acc, rule| {
                 acc.replace(&rule.id, &rule.get_colored())
             })
@@ -22,8 +24,10 @@ impl Module for Hostname {
             self.format.clone()
         }
         .replace("$value", &self.get_val())
-        .add_padding(&self.padding)
-        .add_border(&self.height, &self.alignment, self.border)
+        .add_margin(&self.padding)
+        .align("left");
+
+        self.border.add_border(&formated).add_margin(&self.margin)
     }
     fn get_val(&self) -> String {
         sys_info::hostname().unwrap_or_default()
@@ -32,8 +36,9 @@ impl Module for Hostname {
 impl Default for Hostname {
     fn default() -> Self {
         Self {
+            border: Border::default(),
             format: String::from("\u{1b}[38;2;255;255;255;49;1mHostname:\u{1b}[0m $value"),
-            border: false,
+            margin: 0,
             padding: 0,
             height: 0,
             alignment: String::from("left"),

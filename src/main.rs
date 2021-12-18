@@ -40,7 +40,7 @@ impl Rufet {
 }
 
 fn get_config() -> Result<String, Box<dyn std::error::Error>> {
-    let config = std::fs::read_to_string(env!("HOME").to_owned() + "/.config/rufet.toml")?;
+    let config = std::fs::read_to_string(env!("HOME").to_owned() + "/.config/rufet/config.toml")?;
     Ok(config)
 }
 

@@ -1,4 +1,5 @@
 use crate::borders::Border;
+use crate::color::Rule;
 use crate::utils::*;
 use serde::Deserialize;
 
@@ -11,14 +12,21 @@ pub struct Logo {
     height: usize,
     border: Border,
     alignment: String,
+
+    rule: Vec<Rule>,
 }
 impl Module for Logo {
     fn format(&self) -> String {
-        let formatted = self
-            .format
-            .clone()
-            .add_margin(&self.padding)
-            .align(&self.alignment);
+        let formatted = if !self.rule.is_empty() {
+            self.rule
+                .iter()
+                .map(|rule| self.format.replace(&rule.id, &rule.get_colored()))
+                .collect::<String>()
+        } else {
+            self.format.clone()
+        }
+        .add_margin(&self.padding)
+        .align(&self.alignment);
         self.border.add_border(&formatted)
     }
 }
@@ -27,7 +35,7 @@ impl Default for Logo {
     fn default() -> Self {
         Self {
             format: tux2().to_string(),
-            margin: 2,
+            margin: 0,
             padding: 0,
             height: 0,
             border: Border {
@@ -35,6 +43,7 @@ impl Default for Logo {
                 ..Border::default()
             },
             alignment: "center".to_string(),
+            rule: vec![],
         }
     }
 }

@@ -1,3 +1,5 @@
+use crate::borders::Border;
+use crate::utils::BorderExt;
 use serde::Deserialize;
 
 #[derive(Deserialize, Default, Debug)]
@@ -9,15 +11,25 @@ pub struct Rule {
     pub color: String,
     pub background: String,
     pub effects: Vec<String>,
+    pub border: Border,
+    pub padding: usize,
+    pub margin: usize,
+    pub alignment: String,
 }
 
 impl Rule {
     pub fn get_colored(&self) -> String {
-        self.get_data().format_to_ansi(
-            &self.color.as_foreground(),
-            &self.background.as_background(),
-            &self.get_effects(),
-        )
+        dbg!(&self.border);
+        let formated = self
+            .get_data()
+            .format_to_ansi(
+                &self.color.as_foreground(),
+                &self.background.as_background(),
+                &self.get_effects(),
+            )
+            .add_margin(&self.padding)
+            .align(&self.alignment);
+        self.border.add_border(&formated).add_margin(&self.margin)
     }
 
     fn get_data(&self) -> String {

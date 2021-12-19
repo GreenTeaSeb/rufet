@@ -12,7 +12,6 @@ codegen-units = 1   # Reduce number of codegen units to increase optimizations.
 panic = 'abort'     # Abort on panic
 
 [dependencies]
-#libmacchina = "3"
 toml = "0.5.3"
 serde = {version="1.0.130", features = ["derive"]}
 sys-info = "0.9"

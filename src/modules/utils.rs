@@ -44,7 +44,7 @@ impl BorderExt for String {
     fn align(&self, alignment: &str) -> Self {
         let longest_string = self
             .lines()
-            .map(|x| x.to_string().remove_ansi().chars().count() + 1)
+            .map(|x| x.to_string().remove_ansi().chars().count())
             .max()
             .unwrap_or(0);
         self.lines()

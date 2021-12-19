@@ -156,7 +156,7 @@ Variables for a rule:
        exec: "shell command"
        color: "#fff"|"0;0;0"
        background: "#fff"|"0;0;0"
-       effects: ["bold","underline"...]
+       effects: ["bold","faint","italic","underline","blink","reverse","conceal","crossed"]
        border: Border
        padding: int
        margin: int

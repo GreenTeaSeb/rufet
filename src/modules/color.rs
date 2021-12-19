@@ -19,7 +19,6 @@ pub struct Rule {
 
 impl Rule {
     pub fn get_colored(&self) -> String {
-        dbg!(&self.border);
         let formated = self
             .get_data()
             .format_to_ansi(
@@ -56,7 +55,13 @@ impl Rule {
             .iter()
             .map(|effect| match effect.as_str() {
                 "bold" => ";1",
+                "faint" => ";2",
+                "italic" => ";3",
                 "underline" => ";4",
+                "blink" => ";5",
+                "reverse" => ";7",
+                "conceal" => ";8",
+                "crossed" => ";9",
                 _ => "",
             })
             .collect::<String>()

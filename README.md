@@ -137,13 +137,14 @@ Example: `time_format="Uptime is: $d days, $h hours, $m minutes, $s seconds"`
 ### Customizing the border
 
 The border is a structure inside each module. It has it's own variables which can be customized like so:
-[data.hostname.border]
-top: ['╭', '─', '╮'],
-bottom: ['╰', '─', '╯'],
-sides: ['│', '│'],
-visible: true,
-color: "#ff00ff",
-background: "255;0;0",
+
+    [data.hostname.border]
+    top: ['╭', '─', '╮'],
+    bottom: ['╰', '─', '╯'],
+    sides: ['│', '│'],
+    visible: true,
+    color: "#ff00ff",
+    background: "255;0;0",
 
 ### Rules
 
@@ -151,16 +152,17 @@ If you want to have a custom module that displays text, or executes a script, yo
 Rules can be used to make custom modules or to change the color and appearance of existing modules.
 Variables for a rule:
 
-       id: "id to replace"
-       text: "text"
-       exec: "shell command"
-       color: "#fff"|"0;0;0"
-       background: "#fff"|"0;0;0"
-       effects: ["bold","faint","italic","underline","blink","reverse","conceal","crossed"]
-       border: Border
-       padding: int
-       margin: int
-       alignment: String
+    id: "id to replace"
+    text: "text"
+    exec: "shell command"
+    color: "#fff"|"0;0;0"
+    background: "#fff"|"0;0;0"
+    effects: ["bold","faint","italic","underline","blink","reverse","conceal","crossed"]
+    border: Border
+    padding: int
+    margin: int
+    alignment: String
+
 
 If the `text` variable isn't set, it will replace `id` with itself, while giving it the color. Useful if you want to change the color of a predefined id, like `$value`
 the `text` variable has priority over `exec`,
@@ -185,14 +187,14 @@ Change the value of the `color` and `background` variables, they support hex cod
 Custom modules are still rules, but instead of using the `text` variable to choose the `id`, you use the `exec` variable to execute a shell command that prints to the standard output.
 
     [data]
-    format="$custom1"
-    [[data.rule]]
-    id="$custom1"
-    exec="echo -n aaa"
-    padding=5
-    [data.rule.border]
-    color="#f00"
-    visible=true
+      format="$custom1"
+      [[data.rule]]
+        id="$custom1"
+        exec="echo -n aaa"
+        padding=5
+        [data.rule.border]
+          color="#f00"
+          visible=true
 
 #### ANSI logo
 
@@ -201,8 +203,8 @@ Due to the way toml is made, it doesn't support the `\e` escape code used for AN
     [logo]
     	format="logo"
     	[[logo.rule]]
-    	id="logo"
-    	exec='echo -ne "$(<$HOME/.config/rufet/ansi)" \\n'
+    	  id="logo"
+    	  exec='echo -ne "$(<$HOME/.config/rufet/ansi)" \\n'
 
 ## Screenshots
 

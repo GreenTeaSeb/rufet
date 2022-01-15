@@ -66,7 +66,9 @@ Things planned for the future
 
 ## Installation
 
-todo
+    cargo install rufet 
+    
+or manually clone the repo and build 
 
 ## Configuration
 

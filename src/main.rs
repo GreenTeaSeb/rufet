@@ -49,6 +49,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Ok(x) => toml::from_str(&x).unwrap(),
         Err(_) => Rufet::default(),
     };
+
     let output = rufet.format(&rufet.logo.format(), &rufet.data.format());
     println!("{}", &output);
 

@@ -1,8 +1,15 @@
 [package]
 name = "rufet"
 version = "0.1.0"
-authors = ["Sveb <greentea_chess@protonmail.com>"]
+authors = ["Sveb <sveb@mailfence.com>"]
 edition = "2018"
+license = "Apache-2.0"
+description = "A command-line system information fetcher"
+readme = "README.md"
+homepage = "https://github.com/GreenTeaSeb/rufet"
+repository = "https://github.com/GreenTeaSeb/rufet"
+keywords = ["cli", "fetch"]
+categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [profile.release]

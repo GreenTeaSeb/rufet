@@ -1,6 +1,6 @@
 [package]
 name = "rufet"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Sveb <sveb@mailfence.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -11,14 +11,8 @@ repository = "https://github.com/GreenTeaSeb/rufet"
 keywords = ["cli", "fetch"]
 categories = ["command-line-utilities"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-[profile.release]
-opt-level = 2     # Optimize for size.
-lto = true          # Enable Link Time Optimization
-codegen-units = 1   # Reduce number of codegen units to increase optimizations.
-panic = 'abort'     # Abort on panic
-
 [dependencies]
 toml = "0.5.3"
 serde = {version="1.0.130", features = ["derive"]}
 sys-info = "0.9"
+dirs = "4.0.0"

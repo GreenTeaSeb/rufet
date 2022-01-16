@@ -1,8 +1,8 @@
 mod modules;
 use crate::modules::*;
 use color::AnsiExt;
+use dirs::config_dir;
 use serde::Deserialize;
-
 use utils::Module;
 
 #[derive(Deserialize, Debug, Default)]
@@ -40,11 +40,11 @@ impl Rufet {
 }
 
 fn get_config() -> Result<String, Box<dyn std::error::Error>> {
-    let config = std::fs::read_to_string(env!("HOME").to_owned() + "/.config/rufet/config.toml")?;
-    Ok(config)
+    let file = config_dir().ok_or("no")?.join("rufet/config.toml");
+    Ok(std::fs::read_to_string(&*file.to_string_lossy())?)
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() {
     let rufet: Rufet = match get_config() {
         Ok(x) => toml::from_str(&x).unwrap(),
         Err(_) => Rufet::default(),
@@ -52,6 +52,4 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let output = rufet.format(&rufet.logo.format(), &rufet.data.format());
     println!("{}", &output);
-
-    Ok(())
 }
